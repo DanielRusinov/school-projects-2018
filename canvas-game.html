@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Canvas tutorial</title>
+    <style type="text/css">
+      canvas { border: 1px solid black; }
+    </style>
+    <script>
+    function init(){   
+
+  alert("Не се препоръчва за хора с фоточувствителна епилепсия!");
+
+        var canvas = document.querySelector('canvas');
+        canvas.width = 800;
+        canvas.height = 600;
+        var ctx = canvas.getContext('2d');
+        var lives = 3;
+        var raf;
+
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+var ball = {
+  radius: 100,
+  x: Math.floor(Math.random() * 400) + 50,
+  y: Math.floor(Math.random() * 300) + 50,
+  vx: 5,
+  vy: 5,
+  color: getRandomColor(),
+  draw: function() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
+    ctx.closePath();
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
+};
+
+
+var count = 0;
+var count2 = 0;
+
+function draw(){
+  ctx.clearRect(0,0, canvas.width, canvas.height);
+  ctx.font = '80px serif';
+  ctx.fillText(score, 350, 300);
+  if(score >= 3){
+     ball.color = getRandomColor();
+  }
+  ball.draw();
+
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+if(ball.x > canvas.width + ball.radius || ball.y > canvas.height + ball.radius)
+{
+
+  ball.vx = 5 + velocity;
+  ball.vy = 5 + velocity;
+
+    if(count % 2 == 0){
+      ball.vx = -ball.vx;
+      ball.vy = -ball.vy;
+      ball.x = canvas.width;
+      ball.y = Math.floor(Math.random() * 400) + 1;
+    } else {
+      ball.vx = -ball.vx;
+      ball.vy = +ball.vy;
+      ball.x = Math.floor(Math.random() * 600) + 200;
+      ball.y = 0;
+    }
+
+    count++;
+}
+
+if(ball.x < 0 - ball.radius || ball.y < 0 - ball.radius)
+{
+  ball.vx = 5 + velocity;
+  ball.vy = 5 + velocity;
+
+    if(count2 % 2 == 0){
+      ball.vx = +ball.vx;
+      ball.vy = -ball.vy;
+      ball.x = Math.floor(Math.random() * 600) + 200;
+      ball.y = canvas.width;
+    } else {
+      ball.vx = +ball.vx;
+      ball.vy = +ball.vy;
+      ball.x = 0;
+      ball.y = Math.floor(Math.random() * 400) + 1;
+    }
+
+    count2++;    
+}
+
+raf = window.requestAnimationFrame(draw);
+
+}
+
+canvas.addEventListener('mouseover', function(e) {
+  window.cancelAnimationFrame(raf);
+  raf = window.requestAnimationFrame(draw);
+});
+
+
+canvas.addEventListener('mouseout', function(e) {
+  window.cancelAnimationFrame(raf);
+  raf = window.requestAnimationFrame(draw);
+});
+
+var score = 0;
+var velocity = 0;
+
+canvas.addEventListener('click', function(e){
+        if((e.x - 10 < ball.x + ball.radius && e.x - 10 > ball.x - ball.radius)
+        && (e.y - 10 < ball.y + ball.radius && e.y - 10 > ball.y - ball.radius)
+            ){
+            ball.radius *= .9;
+            score++;
+            velocity = velocity + 0.5;
+        } else {
+            lives--;
+        }
+
+        if(lives < 1){
+            alert("Вие сте мъртъв :( Вашият резултат е: " + score);
+            location.reload();
+        }
+
+});
+
+}
+    </script>
+  </head>
+  <body onload="init();">
+    <canvas id="tutorial" width="800" height="600"></canvas>
+  </body>
+</html>
